@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Results — CareLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a th:href="@{/}" class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>CareLink</a>
+        <div class="nav-links">
+          <sec:authorize access="isAnonymous()"><a th:href="@{/login}" class="btn nav-cta">Sign In</a></sec:authorize>
+          <sec:authorize access="isAuthenticated()"><span class="nav-avatar" th:text="${#strings.substring(#authentication.name,0,1)}">?</span><form th:action="@{/logout}" method="post" style="display:inline;margin:0;padding:0;"><button type="submit" class="btn btn-secondary btn-sm nav-cta" style="margin:0;">Logout</button></form></sec:authorize>
+        </div>
+      </div>
+    </nav>
+
+    <div class="wrap page">
+        <a th:href="@{/emergency}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Search Again
+        </a>
+
+        <div class="page-head">
+            <h1>Hospitals near <span th:text="${area}"></span></h1>
+            <p th:unless="${results.isEmpty()}"><b th:text="${#lists.size(results)}">0</b> hospitals found near you.</p>
+        </div>
+
+        <div class="hospital-grid" th:if="${!results.isEmpty()}">
+            <div class="hospital-card" th:each="h : ${results}">
+                <h3 th:text="${h.name}"></h3>
+                <p class="addr" th:text="${h.address}"></p>
+                <span class="dist">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span th:text="${h.distance}"></span>&nbsp;km away
+                </span>
+                <div th:if="${#lists.isEmpty(h.availableDoctors)}" class="no-slots">
+                    No doctors available right now.
+                </div>
+                <div th:unless="${#lists.isEmpty(h.availableDoctors)}">
+                    <p class="docs-label">Available doctors today</p>
+                    <ul class="doctors-list">
+                        <li th:each="doc : ${h.availableDoctors}">
+                            <span class="doctor-badge" th:text="${doc}"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="empty-state" th:if="${results.isEmpty()}">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <h3>No hospitals found</h3>
+            <p>We couldn't find any hospitals in the selected area. Please try a different area.</p>
+            <a th:href="@{/emergency}" class="btn">Search Again</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

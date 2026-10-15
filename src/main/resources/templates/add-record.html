@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Add Medical Record — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page" style="max-width:760px;">
+        <a th:href="@{/doctor}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="page-head">
+            <h1>Add Medical Record</h1>
+        </div>
+
+        <div class="doc-summary">
+            <div class="avatar" th:text="${#strings.substring(patientName,0,1)}">?</div>
+            <div>
+                <div class="lbl" style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--faint);font-weight:700;">Patient</div>
+                <h2 th:text="${patientName}"></h2>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: error-alert}"></div>
+
+        <div class="card">
+            <form th:action="@{/doctor/appointments/{id}/record(id=${appointmentId})}" method="post">
+                <div class="form-group">
+                    <label for="diagnosis">Diagnosis</label>
+                    <textarea name="diagnosis" id="diagnosis" placeholder="Enter the patient's diagnosis..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="prescription">Prescription</label>
+                    <textarea name="prescription" id="prescription" placeholder="Enter the prescribed medications and instructions..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes <span class="text-muted" style="font-weight:400;">(optional)</span></label>
+                    <textarea name="notes" id="notes" placeholder="Enter any additional notes or observations..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block btn-lg" style="margin-top:8px;">
+                    <svg style="width:18px;height:18px;stroke:#fff" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Save Record &amp; Mark Completed
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

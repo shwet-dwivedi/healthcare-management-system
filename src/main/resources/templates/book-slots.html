@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Book a Slot — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <a th:href="@{/patient/book}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Choose a Different Doctor
+        </a>
+
+        <div class="steps" aria-label="Booking progress">
+            <div class="step done"><span class="n">✓</span> Choose doctor</div>
+            <div class="step-line"></div>
+            <div class="step active"><span class="n">2</span> Pick a slot</div>
+            <div class="step-line"></div>
+            <div class="step"><span class="n">3</span> Confirmed</div>
+        </div>
+
+        <div class="doc-summary">
+            <div class="avatar" th:text="${#strings.substring(doctorName,0,1)}">?</div>
+            <div>
+                <h2 th:text="${doctorName}"></h2>
+                <p><span class="pill pill-teal" th:text="${specialization}"></span></p>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="error-message" role="alert">
+            <strong>Error:</strong> <span th:text="${error}"></span>
+        </div>
+
+        <form th:action="@{/patient/book}" method="post">
+            <input type="hidden" name="doctorId" th:value="${doctorId}" />
+
+            <div class="slots-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Today's Available Slots</h3>
+                <div th:if="${#lists.isEmpty(todaySlots)}" class="no-slots">
+                    No free slots available today — try tomorrow.
+                </div>
+                <div class="slots-group" th:unless="${#lists.isEmpty(todaySlots)}">
+                    <div class="slot-option" th:each="slot : ${todaySlots}">
+                        <input type="radio" name="slotId" th:value="${slot.slotId}" th:id="'today-' + ${slot.slotId}" />
+                        <label th:for="'today-' + ${slot.slotId}" class="slot-time">
+                            <span th:text="${slot.startTime}"></span> – <span th:text="${slot.endTime}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slots-card">
+                <h3><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Tomorrow's Available Slots</h3>
+                <div th:if="${#lists.isEmpty(tomorrowSlots)}" class="no-slots">
+                    No free slots available tomorrow.
+                </div>
+                <div class="slots-group" th:unless="${#lists.isEmpty(tomorrowSlots)}">
+                    <div class="slot-option" th:each="slot : ${tomorrowSlots}">
+                        <input type="radio" name="slotId" th:value="${slot.slotId}" th:id="'tomorrow-' + ${slot.slotId}" />
+                        <label th:for="'tomorrow-' + ${slot.slotId}" class="slot-time">
+                            <span th:text="${slot.startTime}"></span> – <span th:text="${slot.endTime}"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card form-section" style="margin-bottom:24px;">
+                <label for="reason">Reason for Visit</label>
+                <textarea name="reason" id="reason" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+            </div>
+
+            <div class="booking-bar">
+                <div class="sel">Select a time slot above, then confirm your booking.<br/><b>Free cancellation up to 2 hours before.</b></div>
+                <button type="submit" class="btn btn-lg">Confirm Booking</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

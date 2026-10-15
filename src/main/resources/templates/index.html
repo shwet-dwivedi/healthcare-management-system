@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CareLink — Care that finds you</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <!-- Navbar: single component with conditional content based on auth state -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a th:href="@{/}" class="brand">
+        <span class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </span>
+        CareLink
+      </a>
+      <div class="nav-links">
+        <!-- Public nav: Home, Emergency, Sign In (only when anonymous) -->
+        <th:block sec:authorize="isAnonymous()">
+          <a th:href="@{/}">Home</a>
+          <a th:href="@{/emergency}" class="nav-emg">
+            <svg style="width:15px;height:15px;stroke:currentColor;vertical-align:-2px" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Emergency
+          </a>
+          <a th:href="@{/login}" class="btn nav-cta">Sign In</a>
+        </th:block>
+
+        <!-- Authenticated nav: role-aware links + avatar dropdown (only when authenticated) -->
+        <th:block sec:authorize="isAuthenticated()">
+          <!-- DEMO-ONLY: Demo mode badge — must be removed before production -->
+          <th:block sec:authorize="hasAuthority('DEMO_USER')">
+            <span class="demo-badge">Demo Mode</span>
+          </th:block>
+          <th:block sec:authorize="hasRole('PATIENT')">
+            <a th:href="@{/patient}">Dashboard</a>
+            <a th:href="@{/patient/book}">Book Appointment</a>
+            <a th:href="@{/patient/history}">Medical History</a>
+            <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+          </th:block>
+          <th:block sec:authorize="hasRole('DOCTOR')">
+            <a th:href="@{/doctor}">Appointments</a>
+            <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+          </th:block>
+          <th:block sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}">Admin Panel</a>
+            <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+          </th:block>
+          <!-- Avatar dropdown -->
+          <div class="avatar-wrapper">
+            <span class="nav-avatar" id="avatar-trigger" th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">?</span>
+            <div class="avatar-dropdown" id="avatar-menu">
+              <a th:href="@{/patient/profile}">Profile</a>
+              <th:block sec:authorize="hasRole('PATIENT')">
+                <a th:href="@{/patient}">My Appointments</a>
+              </th:block>
+              <th:block sec:authorize="hasRole('DOCTOR')">
+                <a th:href="@{/doctor}">My Appointments</a>
+              </th:block>
+              <form th:action="@{/logout}" method="post" class="dropdown-form">
+                <button type="submit">Logout</button>
+              </form>
+            </div>
+          </div>
+        </th:block>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-stagger">
+        <span class="hero-kicker"><span class="dot"></span> Trusted by patients &amp; doctors</span>
+        <h1>Care that <span class="grad">finds you.</span></h1>
+        <p class="lead">Book appointments with qualified doctors, keep your medical records in one secure place, and reach emergency care in seconds — all with CareLink.</p>
+        <div class="hero-actions">
+          <a th:href="@{/login}" class="btn btn-lg">Sign In</a>
+          <a th:href="@{/patient/book}" class="btn btn-secondary btn-lg">Book Appointment</a>
+        </div>
+      </div>
+      <div class="hero-visual hero-stagger">
+        <div class="glass-card appt-card">
+          <div class="appt-top">
+            <div class="avatar">AR</div>
+            <div>
+              <h4>Dr. Ananya Rao</h4>
+              <p class="sub">Cardiologist · City Heart Hospital</p>
+            </div>
+          </div>
+          <div class="appt-meta">
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Today, 4:30 PM</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Confirmed</span>
+          </div>
+        </div>
+        <div class="glass-card stat-float">
+          <div class="stat"><b>120+</b><span>Doctors online</span></div>
+          <div class="stat"><b>15 min</b><span>Avg. wait time</span></div>
+          <div class="stat"><b>4.9</b><span>Patient rating</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Cardiology <i>✦</i> Neurology <i>✦</i> Pediatrics <i>✦</i> Orthopedics <i>✦</i> Dermatology <i>✦</i> General Medicine <i>✦</i> Gynecology <i>✦</i> Ophthalmology <i>✦</i>&nbsp;</span>
+      <span>Cardiology <i>✦</i> Neurology <i>✦</i> Pediatrics <i>✦</i> Orthopedics <i>✦</i> Dermatology <i>✦</i> General Medicine <i>✦</i> Gynecology <i>✦</i> Ophthalmology <i>✦</i>&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <section class="stats-band">
+    <div class="wrap">
+      <div class="stats-grid">
+        <div class="stat-card reveal"><b>120+</b><span>Qualified doctors</span></div>
+        <div class="stat-card reveal"><b>50K+</b><span>Appointments booked</span></div>
+        <div class="stat-card reveal"><b>98%</b><span>Patient satisfaction</span></div>
+        <div class="stat-card reveal"><b>24/7</b><span>Emergency lookup</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services">
+    <div class="wrap">
+      <h2 class="reveal">Everything your health needs, in one place</h2>
+      <p class="sub reveal">Designed for patients, doctors, and administrators alike.</p>
+      <div class="features">
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <h3>Book Appointments</h3>
+          <p>Schedule appointments with qualified doctors across specializations, at a time that suits you.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <h3>Medical Records</h3>
+          <p>Access your complete medical history, diagnoses, and prescriptions in one secure place.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <h3>Doctor Management</h3>
+          <p>Doctors manage schedules and records; admins get full system-wide oversight.</p>
+        </div>
+        <div class="feature-card reveal">
+          <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+          <h3>Emergency Lookup</h3>
+          <p>Find the nearest hospitals and available doctors instantly — no login required.</p>
+        </div>
+      </div>
+
+      <div class="emg-banner reveal">
+        <div class="emg-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+        <div>
+          <h2>Need emergency help?</h2>
+          <p>Find the nearest hospital and available doctors immediately.</p>
+        </div>
+        <a th:href="@{/emergency}" class="btn">Find Emergency Services</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <div class="wrap">
+      <h2 class="reveal">Ready to get started?</h2>
+      <p class="reveal">Join thousands of patients and healthcare providers using CareLink every day.</p>
+      <a th:href="@{/login}" class="btn btn-lg reveal">Login / Register</a>
+    </div>
+  </section>
+
+  <div th:replace="~{fragments/footer :: footer}"></div>
+
+  <!-- Navbar dropdown toggle script -->
+  <script th:src="@{/js/navbar-dropdown.js}"></script>
+
+  <script>
+    (function () {
+      var els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: 0.12 });
+      els.forEach(function (e) { io.observe(e); });
+    })();
+  </script>
+</body>
+</html>

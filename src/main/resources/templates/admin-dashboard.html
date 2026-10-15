@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Admin Dashboard — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <div class="admin-band">
+            <h1>Admin Control Center</h1>
+            <p>Manage users, doctors, patients, and system-wide appointments.</p>
+        </div>
+
+        <div class="admin-stats">
+            <div class="stat-card"><b th:text="${#lists.size(users)}">0</b><span>Total users</span></div>
+            <div class="stat-card"><b th:text="${#lists.size(appointments)}">0</b><span>Total appointments</span></div>
+            <div class="stat-card"><b>24/7</b><span>System uptime</span></div>
+            <div class="stat-card"><b>Live</b><span>Platform status</span></div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                All Users
+            </h2>
+
+            <div th:if="${users.isEmpty()}" class="empty-state">
+                <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <h3>No users yet</h3>
+                <p>Registered users will appear here.</p>
+            </div>
+
+            <div th:unless="${users.isEmpty()}" class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="u : ${users}">
+                            <td data-label="Name" th:text="${u.fullName}"></td>
+                            <td data-label="Email" th:text="${u.email}"></td>
+                            <td data-label="Phone" th:text="${u.phone ?: '-'}"></td>
+                            <td data-label="Role"><span class="badge" th:classappend="|badge-${u.role}|" th:text="${u.role}"></span></td>
+                            <td data-label="Status">
+                                <span class="status-badge" th:classappend="${u.isActive} ? '' : 'inactive'"
+                                      th:text="${u.isActive} ? 'Active' : 'Inactive'"></span>
+                            </td>
+                            <td data-label="Action">
+                                <div class="action-buttons">
+                                    <form th:action="@{/admin/users/{id}/toggle-active(id=${u.userId})}" method="post"
+                                          th:title="${u.isActive} ? 'Deactivate this user' : 'Activate this user'">
+                                        <button type="submit" th:classappend="${u.isActive} ? 'btn-danger' : 'btn-success'"
+                                                th:text="${u.isActive} ? 'Deactivate' : 'Activate'"></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                All Appointments
+            </h2>
+
+            <div th:if="${appointments.isEmpty()}" class="empty-state">
+                <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <h3>No appointments</h3>
+                <p>No appointments exist in the system yet.</p>
+            </div>
+
+            <div th:unless="${appointments.isEmpty()}" class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="a : ${appointments}">
+                            <td data-label="Patient" th:text="${a.patientName}"></td>
+                            <td data-label="Doctor" th:text="${a.doctorName}"></td>
+                            <td data-label="Date" th:text="${a.date}"></td>
+                            <td data-label="Time" th:text="${a.time}"></td>
+                            <td data-label="Status"><span class="badge" th:classappend="|badge-${a.status}|" th:text="${a.status}"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Book an Appointment — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <a th:href="@{/patient}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="page-head">
+            <h1>Choose your doctor</h1>
+            <p>Select a doctor to view their available appointment slots.</p>
+        </div>
+
+        <div class="steps" aria-label="Booking progress">
+            <div class="step active"><span class="n">1</span> Choose doctor</div>
+            <div class="step-line"></div>
+            <div class="step"><span class="n">2</span> Pick a slot</div>
+            <div class="step-line"></div>
+            <div class="step"><span class="n">3</span> Confirmed</div>
+        </div>
+
+        <div th:if="${doctors.isEmpty()}" class="empty-state">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <h3>No doctors available</h3>
+            <p>Please try again later or contact support.</p>
+        </div>
+
+        <div class="doctor-grid" th:unless="${doctors.isEmpty()}">
+            <div class="doctor-card" th:each="doc : ${doctors}">
+                <div class="doc-top">
+                    <div class="avatar" th:text="${#strings.substring(doc.name,0,1)}">?</div>
+                    <div>
+                        <h3 th:text="${doc.name}"></h3>
+                        <span class="pill pill-teal" th:text="${doc.specialization}"></span>
+                    </div>
+                </div>
+                <div class="fee-row">
+                    <span class="lbl">Consultation Fee</span>
+                    <span class="amt">₹<span th:text="${doc.fee}"></span></span>
+                </div>
+                <a th:href="@{/patient/book/{id}(id=${doc.doctorId})}" class="btn btn-secondary">View Available Slots</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

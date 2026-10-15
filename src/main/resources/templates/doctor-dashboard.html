@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Doctor Dashboard — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <div class="dash-head">
+            <div>
+                <h1>Welcome, Dr. <span th:text="${doctorName}"></span></h1>
+                <p>Manage your appointments and patient medical records.</p>
+            </div>
+            <div class="stat-card" style="padding:16px 24px;">
+                <b th:text="${#lists.size(appointments)}">0</b>
+                <span>Appointments</span>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: success-alert}"></div>
+        <div th:replace="~{fragments/alerts :: error-alert}"></div>
+
+        <div class="section">
+            <h2 class="section-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Your Appointments
+            </h2>
+
+            <div th:if="${appointments.isEmpty()}" class="empty-state">
+                <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <h3>No appointments scheduled</h3>
+                <p>New appointment requests will appear here.</p>
+            </div>
+
+            <div th:unless="${appointments.isEmpty()}" class="queue">
+                <div class="queue-card" th:each="appt : ${appointments}">
+                    <div class="avatar" th:text="${#strings.substring(appt.patientName,0,1)}">?</div>
+                    <div class="q-main">
+                        <h4 th:text="${appt.patientName}"></h4>
+                        <p class="sub"><span th:text="${appt.date}"></span> · <span th:text="${appt.time}"></span> · <span th:text="${appt.reason ?: 'General consultation'}"></span></p>
+                    </div>
+                    <span class="q-time" th:text="${appt.time}"></span>
+                    <span class="badge" th:classappend="|badge-${appt.status}|" th:text="${appt.status}"></span>
+                    <div class="action-buttons">
+                        <span th:if="${appt.status.name() == 'PENDING'}" class="d-inline" style="display:inline-flex;gap:8px;">
+                            <form th:action="@{/doctor/appointments/{id}/confirm(id=${appt.appointmentId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn-success btn-sm">Confirm</button>
+                            </form>
+                            <form th:action="@{/doctor/appointments/{id}/reject(id=${appt.appointmentId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn-danger btn-sm">Reject</button>
+                            </form>
+                        </span>
+                        <span th:if="${appt.status.name() == 'CONFIRMED'}">
+                            <a th:href="@{/doctor/appointments/{id}/record(id=${appt.appointmentId})}" class="btn btn-secondary btn-sm">Add Record</a>
+                        </span>
+                        <span th:unless="${appt.status.name() == 'PENDING' || appt.status.name() == 'CONFIRMED'}" class="text-muted">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

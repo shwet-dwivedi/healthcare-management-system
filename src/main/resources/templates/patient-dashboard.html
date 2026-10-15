@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Patient Dashboard — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <div class="dash-head">
+            <div>
+                <h1>Welcome back, <span th:text="${patientName}"></span></h1>
+                <p>Manage your appointments and your health in one place.</p>
+            </div>
+            <div class="stat-card" style="padding:16px 24px;">
+                <b th:text="${#lists.size(appointments)}">0</b>
+                <span>Total appointments</span>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a th:href="@{/patient/book}" class="qa-tile">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                <span>Book Appointment<small>Find a doctor &amp; pick a slot</small></span>
+            </a>
+            <a th:href="@{/emergency}" class="qa-tile danger">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                <span>Emergency<small>Find nearest hospital</small></span>
+            </a>
+            <a th:href="@{/patient/history}" class="qa-tile">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
+                <span>Medical History<small>Records &amp; prescriptions</small></span>
+            </a>
+            <a th:href="@{/patient/profile}" class="qa-tile">
+                <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                <span>Profile<small>Your account details</small></span>
+            </a>
+        </div>
+
+        <div th:replace="~{fragments/alerts :: all-alerts}"></div>
+
+        <div class="section">
+            <h2 class="section-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Your Appointments
+            </h2>
+
+            <div th:if="${appointments.isEmpty()}" class="empty-state">
+                <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+                <h3>No appointments yet</h3>
+                <p>Book your first appointment with a qualified doctor.</p>
+                <a th:href="@{/patient/book}" class="btn">Book Appointment</a>
+            </div>
+
+            <div th:unless="${appointments.isEmpty()}" class="timeline">
+                <div class="appt-row" th:each="appt : ${appointments}">
+                    <div class="date-block">
+                        <b th:text="${#temporals.format(appt.date, 'dd MMM')}">10 Oct</b>
+                        <small th:text="${#temporals.format(appt.date, 'yyyy')}">2026</small>
+                        <span th:text="${#temporals.format(appt.time, 'hh:mm a')}">10:00 AM</span>
+                    </div>
+                    <div class="appt-main">
+                        <h4 th:text="${appt.doctorName}"></h4>
+                        <p class="sub"><span th:text="${appt.specialization}"></span> · <span class="reason-text" th:title="${appt.reason ?: 'General consultation'}" th:text="${appt.reason ?: 'General consultation'}"></span></p>
+                    </div>
+                    <div class="appt-side">
+                        <span class="badge" th:classappend="|badge-${appt.status}|" th:text="${appt.status}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

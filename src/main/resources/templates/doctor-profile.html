@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>My Profile — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <a th:href="@{/doctor}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="profile-card">
+            <div class="profile-avatar" th:text="${#strings.substring(doctorName,0,1)}">?</div>
+            <h2>Dr. <span th:text="${doctorName}"></span></h2>
+            <span class="pill pill-teal">Doctor</span>
+            <div class="profile-rows">
+                <div class="profile-field">
+                    <span class="profile-label">Email Address</span>
+                    <span class="profile-value" th:text="${doctorEmail}"></span>
+                </div>
+                <div class="profile-field">
+                    <span class="profile-label">Phone Number</span>
+                    <span class="profile-value" th:text="${doctorPhone ?: 'Not provided'}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span><strong>Note:</strong> To update your profile information, including email, phone, or other details, please contact the administrator or reach out to support. Profile changes require verification for security purposes.</span>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

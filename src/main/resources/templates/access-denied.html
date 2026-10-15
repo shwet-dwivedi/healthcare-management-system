@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied — CareLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a th:href="@{/}" class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>CareLink</a>
+        <div class="nav-links">
+          <a th:href="@{/login}" class="btn nav-cta">Sign In</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="denied-wrap">
+        <div class="error-card">
+            <div class="error-code">403</div>
+            <h1 class="error-title">Access Denied</h1>
+            <p>You do not have permission to access this resource.</p>
+            <p>If you believe this is a mistake, please contact your administrator or log in with a different account.</p>
+            <a th:href="@{/}" class="btn">Go Back Home</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <title>Medical History — CareLink</title>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar :: authenticated}"></div>
+
+    <div class="wrap page">
+        <a th:href="@{/patient}" class="back-link">
+            <svg style="width:16px;height:16px;stroke:currentColor" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="page-head">
+            <h1>Medical History</h1>
+            <p>Your complete health record — diagnoses, prescriptions, and notes from <span th:text="${patientName}"></span>'s visits.</p>
+        </div>
+
+        <div th:if="${records.isEmpty()}" class="empty-state">
+            <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <h3>No medical records yet</h3>
+            <p>Your records will appear here after your first completed appointment.</p>
+            <a th:href="@{/patient/book}" class="btn">Book Appointment</a>
+        </div>
+
+        <div th:unless="${records.isEmpty()}" class="record-timeline">
+            <div class="record-item" th:each="record : ${records}">
+                <div class="rec-head">
+                    <div class="avatar" style="width:44px;height:44px;font-size:16px;" th:text="${#strings.substring(record.doctorName,0,1)}">?</div>
+                    <h4 th:text="${record.doctorName}"></h4>
+                    <span class="rec-date" th:text="${record.date}"></span>
+                </div>
+                <div class="rec-block">
+                    <div class="lbl">Diagnosis</div>
+                    <p th:text="${record.diagnosis}"></p>
+                </div>
+                <div class="rec-block presc">
+                    <div class="lbl">Prescription</div>
+                    <p th:text="${record.prescription}"></p>
+                </div>
+                <div class="rec-block">
+                    <div class="lbl">Notes</div>
+                    <p th:text="${record.notes ?: '-'}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

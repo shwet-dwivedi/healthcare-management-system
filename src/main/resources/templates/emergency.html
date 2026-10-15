@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency — Find Nearest Hospital | CareLink</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <a th:href="@{/}" class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>CareLink</a>
+        <div class="nav-links">
+          <sec:authorize access="isAnonymous()"><a th:href="@{/login}" class="btn nav-cta">Sign In</a></sec:authorize>
+          <sec:authorize access="isAuthenticated()"><span class="nav-avatar" th:text="${#strings.substring(#authentication.name,0,1)}">?</span><form th:action="@{/logout}" method="post" style="display:inline;margin:0;padding:0;"><button type="submit" class="btn btn-secondary btn-sm nav-cta" style="margin:0;">Logout</button></form></sec:authorize>
+        </div>
+      </div>
+    </nav>
+
+    <section class="emg-hero">
+        <div class="emg-hero-inner">
+            <div class="emg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h1>Find the nearest hospital</h1>
+            <p>No login required. Select your area to find nearby hospitals with available doctors.</p>
+            <form th:action="@{/emergency/results}" method="get" class="emg-form">
+                <select name="area" id="area" required aria-label="Select your area">
+                    <option value="">Choose your area…</option>
+                    <option th:each="a : ${areas}" th:value="${a}" th:text="${a}"></option>
+                </select>
+                <button type="submit">Find Hospitals</button>
+            </form>
+        </div>
+    </section>
+
+    <div class="emg-notice">
+        <div class="alert alert-warning" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span><strong>Important:</strong> For life-threatening emergencies, please call emergency services (108) immediately instead of using this lookup.</span>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

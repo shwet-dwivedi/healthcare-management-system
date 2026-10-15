@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Public navbar -->
+<nav class="nav" th:fragment="public">
+  <div class="nav-inner">
+    <a th:href="@{/}" class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </span>
+      CareLink
+    </a>
+    <div class="nav-links">
+      <a th:href="@{/}">Home</a>
+      <a th:href="@{/emergency}" class="nav-emg">
+        <svg style="width:15px;height:15px;stroke:currentColor;vertical-align:-2px" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Emergency
+      </a>
+      <a th:href="@{/login}" class="btn nav-cta">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Authenticated navbar (role-aware) -->
+<nav class="nav" th:fragment="authenticated">
+  <div class="nav-inner">
+    <a th:href="@{/}" class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      </span>
+      CareLink
+    </a>
+    <div class="nav-links">
+      <th:block sec:authorize="hasRole('PATIENT')">
+        <a th:href="@{/patient}">Dashboard</a>
+        <a th:href="@{/patient/book}">Book Appointment</a>
+        <a th:href="@{/patient/history}">Medical History</a>
+        <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+      </th:block>
+      <th:block sec:authorize="hasRole('DOCTOR')">
+        <a th:href="@{/doctor}">Appointments</a>
+        <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+      </th:block>
+      <th:block sec:authorize="hasRole('ADMIN')">
+        <a th:href="@{/admin}">Admin Panel</a>
+        <a th:href="@{/emergency}" class="nav-emg">Emergency</a>
+      </th:block>
+      <!-- Avatar dropdown: only show when authenticated -->
+      <div class="avatar-wrapper">
+        <span class="nav-avatar" id="avatar-trigger" th:text="${#strings.substring(#authentication.name,0,1).toUpperCase()}">?</span>
+        <div class="avatar-dropdown" id="avatar-menu">
+          <a th:href="@{/patient/profile}">Profile</a>
+          <th:block sec:authorize="hasRole('PATIENT')">
+            <a th:href="@{/patient}">My Appointments</a>
+          </th:block>
+          <th:block sec:authorize="hasRole('DOCTOR')">
+            <a th:href="@{/doctor}">My Appointments</a>
+          </th:block>
+          <form th:action="@{/logout}" method="post" class="dropdown-form">
+            <button type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+</body>
+</html>
